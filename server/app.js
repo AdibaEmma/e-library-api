@@ -19,8 +19,8 @@ const student = require("../server/routes/studentRouter");
 
 
 // using avialable routes.
-app.use("/admin", admin)
-app.use("/student", student)
+app.use("/api", admin)
+app.use("/api", student)
 
 
 

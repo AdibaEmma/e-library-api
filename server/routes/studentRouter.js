@@ -3,8 +3,10 @@ const router = express.Router();
 
 const Student = require("../controllers/studentController");
 
-router.get("/", Student.getStudents);
-router.post("/register", Student.studentRegister);
-router.post("/login", Student.studentLogin);
+router.get("/students", Student.getStudents);
+router.post("/students/register", Student.studentRegister);
+router.post("/students/login", Student.studentLogin);
+router.put("/students/:id", Student.updateStudent)
+router.delete("/students/:id", Student.deleteStudent)
 
 module.exports = router;
