@@ -1,13 +1,27 @@
 const express = require("express");
 
-exports.get_students = (req, res, next) => {
-    res.send("Hello Student");
+exports.studentRegister = (req, res, next) => {
+    res.send("registered");
 }
 
-exports.register = (req, res, next) => {
-    res.send("Student Register Page");
+exports.studentLogin = (req, res, next) => {
+    res.send("logged-in successfully");
 }
 
-exports.login = (req, res, next) => {
-    res.send("Student Login Page");
+exports.getStudents = (req, res, next) => {
+    res.json({"Students":
+        [
+            {"name": "Adiba Emma",
+            "age": 22,
+            "program": "Petroleum",
+            "level": 200
+            },
+            {"name": "Aweperi Emma",
+            "age": 19,
+            "program": "UI/UX Designer",
+            "level": 300
+            }
+        ]
+    })
 }
+

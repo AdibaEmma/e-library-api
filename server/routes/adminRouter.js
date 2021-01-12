@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const Admin = require("../controllers/adminController")
 
 
-router.get("/admin", Admin.get_all)
-router.get("/admin/register" , Admin.register)
-router.get("/admin/login", Admin.login)
+let admin = require("../controllers/adminController")
+
+
+router.get("/", admin.get_all)
+router.post("/register" , admin.register)
+router.post("/api/login", admin.login)
 
 
 module.exports = router;

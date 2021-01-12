@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const path = require("path");
 
 const app = express();
 
@@ -13,10 +14,13 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + "/client"));
 
 // requiring routes
-const admin = require("./routes/adminRouter");
+const admin = require("../server/routes/adminRouter");
+const student = require("../server/routes/studentRouter");
 
 
-app.use("/api", admin)
+// using avialable routes.
+app.use("/admin", admin)
+app.use("/student", student)
 
 
 
@@ -35,8 +39,8 @@ app.get("/", (req, res) => {
 })
 
 
-const PORT = process.env.NODE_ENV === "local" ?  process.env.port : 3000;
-app.listen(PORT, () => {
-    console.log(`Server listening at port ${PORT}`);
+const port = process.env.NODE_ENV === "production" ?  process.env.PORT : 3000;
+app.listen(port, () => {
+    console.log(`Server listening at port ${port}`);
 })
 
