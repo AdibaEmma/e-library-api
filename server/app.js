@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const path = require("path");
+
 
 const app = express();
 
@@ -10,9 +12,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
-// middleware for serving static files
+// middleware 
 app.use(express.static(__dirname + "/client"));
-
+app.use(cookieParser());
 // requiring routes
 const admin = require("../server/routes/adminRouter");
 const student = require("../server/routes/studentRouter");

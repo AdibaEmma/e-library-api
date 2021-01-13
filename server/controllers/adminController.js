@@ -1,9 +1,15 @@
+require("dotenv").config();
 const express = require("express");
 const { json } = require("body-parser");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const dbConnection = require("../db/connect");
 const Admin = require("../models/Admin");
+
+// admin auth
+const auth = require("../middlewares/auth")
 
 exports.register = (req, res, next) => {
     try {
@@ -62,16 +68,25 @@ exports.register = (req, res, next) => {
                     .save()
                     .then(result => {
                         if (result) {
+                            const id = result._id; 
+                            const maxAge = 1000 * 60 * 60;
+                            const token = jwt.sign({id}, process.env.JWT_KEY, {
+                                expiresIn: "1hr"
+                            });
+                            res.cookie("jwt", token, {httpOnly: true})
+                            res.cookie("username", result.admin_email, {maxAge: maxAge * 24, httpOnly: true})
                             return res.status(200).json({
                                 "message": "admin registeration successful",
-                                "res": result
+                                "token": token,
+                                "admin": result
                             })
                         }
                     })
                     .catch(err => {
                         console.log(err);
                         return res.status(500).json({
-                            "error": "there was an error, could not register admin"
+                            "error": "there was an error, could not register admin",
+                            "res": err
                         })
                     })
                 }
