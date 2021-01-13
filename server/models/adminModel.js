@@ -4,11 +4,12 @@ const adminSchema = mongoose.Schema({
     _id: mongoose.Types.ObjectId,
     admin_name: {
         type: String,
-        required: true
+        required: [true, "Admin name is required"]
     },
     admin_email: {
         type: String,
-        required: true
+        unique: true,
+        required: [true, "Admin email is required"]
     },
     admin_password: {
         type: String,
