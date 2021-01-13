@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
-// seriving static files
+// middleware for serving static files
 app.use(express.static(__dirname + "/client"));
 
 // requiring routes

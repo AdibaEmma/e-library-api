@@ -1,11 +1,13 @@
-const { json } = require("body-parser");
 const express = require("express");
+const { json } = require("body-parser");
+const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const dbConnection = require("../db/connect");
-const Admin = require("../models/adminModel");
+const Admin = require("../models/Admin");
 
 exports.register = (req, res, next) => {
-    Admin.find({})
+    try {
+        Admin.find({})
         .exec()
         .then(admins => {
             if (admins.length >= 1) {
@@ -31,36 +33,51 @@ exports.register = (req, res, next) => {
                 new_admin_signup()
             }
         })
-        .catch(err => {
+    } catch(err) {
             console.log(err);
             res.status(500).json({
                 "error": "an error occured, could not register admin"
             })
-        })
+    }
 
 
     const new_admin_signup = () => {
-        new Admin({
-                _id: new mongoose.Types.ObjectId,
-                admin_name: req.body.name,
-                admin_email: req.body.email,
-                admin_password: req.body.password
-            })
-            .save()
-            .then(result => {
-                if (result) {
-                    return res.status(200).json({
-                        "message": "admin registeration successful",
-                        "res": result
+            const {name, email, password} = req.body;
+
+            bcrypt.hash(password, 10, function(err, hash) {
+                // Store hash in your password DB.
+
+                if(err) {
+                    console.log(err);
+                    res.status(500).json({
+                        "error": "could not hash password"
+                    })
+                } else {
+                    new Admin({
+                        _id: new mongoose.Types.ObjectId,
+                        admin_name: name,
+                        admin_email: email,
+                        admin_password: hash
+                })
+                    .save()
+                    .then(result => {
+                        if (result) {
+                            return res.status(200).json({
+                                "message": "admin registeration successful",
+                                "res": result
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        return res.status(500).json({
+                            "error": "there was an error, could not register admin"
+                        })
                     })
                 }
-            })
-            .catch(err => {
-                console.log(err);
-                return res.status(500).json({
-                    "error": "there was an error, could not register admin"
-                })
-            })
+                
+            });
+            
     }
 }
 

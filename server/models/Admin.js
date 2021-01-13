@@ -9,7 +9,8 @@ const adminSchema = mongoose.Schema({
     admin_email: {
         type: String,
         unique: true,
-        required: [true, "Admin email is required"]
+        required: [true, "Admin email is required"],
+        lowercase: true
     },
     admin_password: {
         type: String,
@@ -17,6 +18,7 @@ const adminSchema = mongoose.Schema({
     }
 })
 
-const Admin =  mongoose.model("Admin", adminSchema);
+
+const Admin = mongoose.model("Admin", adminSchema);
 
 module.exports = Admin;
