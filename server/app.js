@@ -30,10 +30,6 @@ app.use("/api", student)
 
 
 
-
-
-
-
 app.get("/", (req, res) => {
     res.json({
         "message": "Welcome"
