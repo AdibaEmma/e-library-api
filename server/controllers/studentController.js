@@ -123,24 +123,57 @@ exports.studentRegister = (req, res, next) => {
 }
 
 exports.studentLogin = (req, res, next) => {
-    res.send("logged-in successfully");
-}
+    Admin.findOne({
+        indexNo: req.body.indexNo
+    })
+    .exec()
+    .then(result => {
+        if (result === null) {
+            res.status(422).json({
+                res: "failed",
+                message: "invalid username"
+            })
+        } else {
+            bcrypt.compare(req.body.password, result.password, (err, isMatch) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).json({
+                        error: "an error occured"
+                    })
+                } else if (isMatch === true) {
+                    const {
+                        _id: id,
+                        indexNo: indexNo
+                    } = result;
+                    const token = jwt.sign({
+                        id,
+                        indexNo
+                    }, process.env.JWT_KEY, {
+                        expiresIn: "12h"
+                    })
+                    res.status(200).json({
+                        res: "success",
+                        message: "authentication successful",
+                        token
+                    })
+                } else {
+                    res.status(400).json({
+                        res: "failed",
+                        message: "invalid password"
+                    })
+                }
+            });
+        }
+    })
+    .catch (err => {
+console.log(err);
+res.status(500).json({
+    "error": err
+})
+})
 
 exports.getStudents = (req, res, next) => {
-    res.json({"Students":
-        [
-            {"name": "Adiba Emma",
-            "age": 22,
-            "program": "Petroleum",
-            "level": 200
-            },
-            {"name": "Aweperi Emma",
-            "age": 19,
-            "program": "UI/UX Designer",
-            "level": 300
-            }
-        ]
-    })
+    
 }
 
 exports.updateStudent = (req, res,next) => {
