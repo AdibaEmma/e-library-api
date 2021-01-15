@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const studentSchema = new mongoose.Schema({
-    _id: mongoose.Types._ObjectId,
+    _id: mongoose.Types.ObjectId,
     name: {
         type: [String,  "name must be string" ],
         required: true,
@@ -12,6 +12,7 @@ const studentSchema = new mongoose.Schema({
         required: [true, "email is required"],
         lowercase: [true, "email must be in lowercase"]
     },
+    age: Number,
     indexNo: String,
     program: String,
     level: String,
