@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const studentSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
     name: {
-        type: [String,  "name must be string" ],
+        type: String,
         required: true,
     },
     email: {

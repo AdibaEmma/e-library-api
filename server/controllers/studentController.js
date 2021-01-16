@@ -7,8 +7,26 @@ const mongoose = require("mongoose");
 require("../db/connect");
 const Student = require("../models/Student");
 
+exports.getStudents = async (req, res, next) => {
+    await Student.find({})
+        .exec()
+        .then(students => {
+            if (students.length >= 1) {
+                students = JSON.stringify(students)
+                res.status(302).send(students)
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: "an errror occured, could not fetch students",
+                res: err
+            })
+        })
+}
+
 exports.studentRegister = (req, res, next) => {
-    
+
     try {
         Student.find({})
             .exec()
@@ -86,7 +104,8 @@ exports.studentRegister = (req, res, next) => {
                             const maxAge = 1000 * 60 * 60;
 
                             const token = jwt.sign({
-                                id, name
+                                id,
+                                name
                             }, process.env.JWT_KEY, {
                                 expiresIn: "12h"
                             });
@@ -123,68 +142,119 @@ exports.studentRegister = (req, res, next) => {
 }
 
 exports.studentLogin = (req, res, next) => {
-    Admin.findOne({
-        indexNo: req.body.indexNo
-    })
-    .exec()
-    .then(result => {
-        if (result === null) {
-            res.status(422).json({
-                res: "failed",
-                message: "invalid username"
+    Student.findOne({
+            indexNo: req.body.indexNo
+        })
+        .exec()
+        .then(result => {
+            if (result === null) {
+                res.status(422).json({
+                    res: "failed",
+                    message: "invalid username"
+                })
+            } else {
+                bcrypt.compare(req.body.password, result.password, (err, isMatch) => {
+                    if (err) {
+                        console.log(err);
+                        res.status(500).json({
+                            error: "an error occured"
+                        })
+                    } else if (isMatch === true) {
+                        const {
+                            _id: id,
+                            indexNo: indexNo
+                        } = result;
+                        const token = jwt.sign({
+                            id,
+                            indexNo
+                        }, process.env.JWT_KEY, {
+                            expiresIn: "12h"
+                        })
+                        res.status(200).json({
+                            res: "success",
+                            message: "authentication successful",
+                            token
+                        })
+                    } else {
+                        res.status(400).json({
+                            res: "failed",
+                            message: "invalid password"
+                        })
+                    }
+                });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                "error": err
             })
-        } else {
-            bcrypt.compare(req.body.password, result.password, (err, isMatch) => {
-                if (err) {
-                    console.log(err);
-                    res.status(500).json({
-                        error: "an error occured"
-                    })
-                } else if (isMatch === true) {
-                    const {
-                        _id: id,
-                        indexNo: indexNo
-                    } = result;
-                    const token = jwt.sign({
-                        id,
-                        indexNo
-                    }, process.env.JWT_KEY, {
-                        expiresIn: "12h"
-                    })
-                    res.status(200).json({
-                        res: "success",
-                        message: "authentication successful",
-                        token
-                    })
-                } else {
-                    res.status(400).json({
-                        res: "failed",
-                        message: "invalid password"
-                    })
-                }
-            });
-        }
-    })
-    .catch (err => {
-console.log(err);
-res.status(500).json({
-    "error": err
-})
-})
+        })
 
-exports.getStudents = (req, res, next) => {
-    
 }
 
-exports.updateStudent = (req, res,next) => {
 
-    const id = req.params.id;
-    res.send(`update on student with id ${id} is successful`)
+exports.updateStudent = async (req, res, next) => {
+    let id = req.params.id
+    await Student.findById({
+            _id: id
+        }).exec()
+        .then(foundStudent => {
+            if (req.body.password != null) {
+                bcrypt.hash(req.body.password, 10, (err, hash) => {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({
+                            error: "an error occured",
+                            res: err
+                        })
+                    } else {
+                        find_and_update(foundStudent,hash)
+                        return res.status(200).json({
+                            res: "updated",
+                            message: "student details updated"
+                        })
+                    }
+
+
+                })
+
+            } else {
+                find_and_update(foundStudent, foundStudent.password)
+                return res.status(200).json({
+                    res: "updated",
+                    message: "student details updated"
+                })
+            }
+
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: "an error occured",
+                res: err
+            })
+        })
+
+    find_and_update = (student, password) => {
+        Student.findByIdAndUpdate({
+                _id: id
+            }, {
+                name: req.body.name ? req.body.name : student.name,
+                email: req.body.email ? req.body.email : student.email,
+                age: req.body.age ? req.body.age : student.age,
+                indexNo: req.body.indexNo ? req.body.indexNo : student.indexNo,
+                program: req.body.program ? req.body.program : student.program,
+                level: req.body.level ? req.body.level : student.level,
+                password: password
+            })
+            .exec()
+    }
+
 }
 
-exports.deleteStudent = (req, res,next) => {
+exports.deleteStudent = (req, res, next) => {
 
     const id = req.params.id;
     res.send(`Student with id ${id} has been deleted successfully`)
 }
-
