@@ -253,8 +253,20 @@ exports.updateStudent = async (req, res, next) => {
 
 }
 
-exports.deleteStudent = (req, res, next) => {
+exports.deleteStudent = async (req, res, next) => {
+    try {
+        await Student.findByIdAndDelete({_id: req.params.id}).exec()
 
-    const id = req.params.id;
-    res.send(`Student with id ${id} has been deleted successfully`)
+    return res.status(200).json({
+        res: "deleted", message: "student account deleted!"
+    })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: "error has occured",
+            res: err
+        })
+    }
+    
+    
 }
