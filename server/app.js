@@ -18,11 +18,13 @@ app.use(cookieParser());
 // requiring routes
 const admin = require("../server/routes/adminRouter");
 const student = require("../server/routes/studentRouter");
+const books = require("../server/routes/booksRouter")
 
 
 // using avialable routes.
 app.use("/api", admin)
 app.use("/api", student)
+app.use("/api", books)
 
 
 
@@ -31,9 +33,7 @@ app.use("/api", student)
 
 
 app.get("/", (req, res) => {
-    res.json({
-        "message": "Welcome"
-    })
+    res.send("Welcome")
 })
 
 
