@@ -126,3 +126,19 @@ exports.update_book = async (req, res, next) => {
         })
     }
 }
+
+exports.delete_book = async (req, res, next) => {
+    try {
+        await Book.findByIdAndDelete({_id: req.params.id}).exec()
+
+    return res.status(200).json({
+        res: "deleted", message: "book has been deleted!"
+    })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: "error has occured",
+            res: err 
+        })
+    }
+}
