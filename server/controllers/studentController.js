@@ -264,7 +264,7 @@ exports.deleteStudent = async (req, res, next) => {
         console.log(err);
         res.status(500).json({
             error: "error has occured",
-            res: err
+            res: err 
         })
     }
     
