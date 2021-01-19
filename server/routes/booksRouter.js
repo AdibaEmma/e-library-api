@@ -6,6 +6,7 @@ let books = require("../controllers/booksController")
 
 
 router.get("/books", books.fetch_books)
+router.get("/books/:id", books.get_book)
 router.post("/books/add", books.add_book)
 router.put("/books/:id/update", books.update_book)
 

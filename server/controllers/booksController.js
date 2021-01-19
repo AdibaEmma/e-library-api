@@ -12,7 +12,7 @@ exports.fetch_books = async (req, res, next) => {
                 if (books.length >= 1) {
 
                     foundBooks = JSON.stringify(books)
-                    res.status(302).send(200, foundBooks)
+                    res.status(302).send(foundBooks)
                 } else {
                     res.status(503).json({
                         res: "unavailable",
@@ -26,6 +26,23 @@ exports.fetch_books = async (req, res, next) => {
             error: err.message
         })
     }
+}
+
+exports.get_book = async (req, res, next) => {
+    const id = req.params.id
+    await Book.findOne({_id: id})
+    .exec()
+    .then(book => {
+        if(book != null) {
+            foundBook = JSON.stringify(book)
+                    res.status(302).send(foundBook)
+        } else {
+            res.status(400).json({
+                res: "failed",
+                message: `sorry,book with id: ${err.value._id} cannot be find in our database`
+            })
+        }
+    })
 }
 
 exports.add_book = async (req, res, next) => {
