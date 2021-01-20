@@ -81,7 +81,7 @@ exports.register = (req, res, next) => {
                                 id,
                                 name
                             }, process.env.JWT_KEY, {
-                                expiresIn: "12h"
+                                expiresIn: "1h"
                             });
                             res.cookie("jwt", token, {
                                 httpOnly: true
