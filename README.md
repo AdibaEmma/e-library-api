@@ -1,2 +1,2 @@
 # e-library
-MERN app for library management
+Backend for library management
