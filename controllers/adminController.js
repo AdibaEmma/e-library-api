@@ -13,9 +13,7 @@ exports.index = async (req, res, next) => {
         await Admin.find({})
             .exec()
             .then(admins => {
-                foundAdmins = JSON.stringify(admins);
-
-                res.status(200).send(foundAdmins);
+                res.status(302).send({admins});
             })
 
     } catch (err) {

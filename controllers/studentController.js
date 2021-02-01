@@ -259,6 +259,7 @@ exports.update = async (req, res, next) => {
             })
         })
 
+    // Function gets executed to update student details when all conditions are met
     find_and_update = (student, password) => {
         Student.findByIdAndUpdate({
                 _id: id

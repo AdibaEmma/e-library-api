@@ -10,7 +10,7 @@ router.get("/admins/:id", show)
 router.post("/admins/" , create)
 router.post("/admins/login", login)
 router.put("/admins/:id", update)
-router.delete("/adimns/:id", Delete)
+router.delete("/admins/:id", Delete)
 
 
 module.exports = router;

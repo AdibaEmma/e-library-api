@@ -6,7 +6,7 @@ const {index, show, create, studentLogin, update, Delete} = student
 
 router.get("/students", index);
 router.get("/students/:id", show)
-router.post("/students/register", create);
+router.post("/students", create);
 router.post("/students/login", studentLogin);
 router.put("/students/:id", update);
 router.delete("/students/:id", Delete);
