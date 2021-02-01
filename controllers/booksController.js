@@ -5,14 +5,13 @@ const mongoose = require("mongoose");
 const dbConnection = require("../db/connect");
 const Book = require("../models/Book");
 
-exports.fetch_books = async (req, res, next) => {
+exports.index = async (req, res, next) => {
     try {
         await Book.find({}).exec()
             .then(books => {
                 if (books.length >= 1) {
 
-                    foundBooks = JSON.stringify(books)
-                    res.status(302).send(foundBooks)
+                    res.status(302).send({books})
                 } else {
                     res.status(503).json({
                         res: "unavailable",
@@ -28,14 +27,15 @@ exports.fetch_books = async (req, res, next) => {
     }
 }
 
-exports.get_book = async (req, res, next) => {
-    const id = req.params.id
-    await Book.findOne({_id: id})
+exports.show = async (req, res, next) => {
+    await Book.findById({_id: req.params.id})
     .exec()
     .then(book => {
         if(book != null) {
-            foundBook = JSON.stringify(book)
-                    res.status(302).send(foundBook)
+                res.status(302).send({
+                    res: "found",
+                    book
+                })
         } else {
             res.status(400).json({
                 res: "failed",
@@ -45,7 +45,7 @@ exports.get_book = async (req, res, next) => {
     })
 }
 
-exports.add_book = async (req, res, next) => {
+exports.create = async (req, res, next) => {
     try {
         await Book.find({
                 title: req.body.title
@@ -89,7 +89,7 @@ exports.add_book = async (req, res, next) => {
     }
 }
 
-exports.update_book = async (req, res, next) => {
+exports.update = async (req, res, next) => {
     id = req.params.id
     try {
         await Book.findById({
@@ -122,12 +122,13 @@ exports.update_book = async (req, res, next) => {
     } catch (err) {
         res.status(400).json({
             res: "failed",
-            message: `sorry,book with id: ${err.value._id} cannot be find in our database`
+            message: `sorry,book with id: ${err.value._id} cannot be found in our database`
         })
     }
 }
 
-exports.delete_book = async (req, res, next) => {
+
+exports.Delete = async (req, res, next) => {
     try {
         await Book.findByIdAndDelete({_id: req.params.id}).exec()
 
