@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 
-let admin = require("../controllers/adminController")
+const admin = require("../controllers/adminController")
+const {index, show, create, login} = admin
 
-
-router.get("/admins", admin.index)
-router.get("/admins/:id", admin.show)
-router.post("/admins/register" , admin.create)
-router.post("/admins/login", admin.login)
+router.get("/admins", index)
+router.get("/admins/:id", show)
+router.post("/admins/register" , create)
+router.post("/admins/login", login)
 
 
 module.exports = router;
