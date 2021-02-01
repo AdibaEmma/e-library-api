@@ -16,9 +16,9 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + "/client"));
 app.use(cookieParser());
 // requiring routes
-const admin = require("../server/routes/adminRouter");
-const student = require("../server/routes/studentRouter");
-const books = require("../server/routes/booksRouter")
+const admin = require("./routes/adminRouter");
+const student = require("./routes/studentRouter");
+const books = require("./routes/booksRouter")
 
 
 // using avialable routes.

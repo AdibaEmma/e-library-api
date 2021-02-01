@@ -5,8 +5,9 @@ const router = express.Router();
 let admin = require("../controllers/adminController")
 
 
-router.get("/admins", admin.get_all)
-router.post("/admins/register" , admin.register)
+router.get("/admins", admin.index)
+router.get("/admins/:id", admin.show)
+router.post("/admins/register" , admin.create)
 router.post("/admins/login", admin.login)
 
 

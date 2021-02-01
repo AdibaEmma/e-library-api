@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 require("../db/connect");
 const Student = require("../models/Student");
 
-exports.getStudents = async (req, res, next) => {
+exports.index = async (req, res, next) => {
     await Student.find({})
         .exec()
         .then(students => {
@@ -25,10 +25,30 @@ exports.getStudents = async (req, res, next) => {
         })
 }
 
-exports.studentRegister = (req, res, next) => {
+exports.show = async (req, res, next) => {
+    try {
+        await Student.findById({_id: req.params.id}).exec()
+                .then(student => {
+                    if(student) {
+                        res.status(302).json({
+                            message: "Found",
+                            student
+                        })
+                    } 
+                })
+    } catch (err) {
+        res.status(404).json({
+            error: err.message
+        })
+    }
+}
+
+
+
+exports.create = async (req, res, next) => {
 
     try {
-        Student.find({})
+        await Student.find({})
             .exec()
             .then(students => {
                 if (students.length >= 1) {
@@ -141,8 +161,8 @@ exports.studentRegister = (req, res, next) => {
     }
 }
 
-exports.studentLogin = (req, res, next) => {
-    Student.findOne({
+exports.studentLogin = async (req, res, next) => {
+    await Student.findOne({
             indexNo: req.body.indexNo
         })
         .exec()
@@ -194,7 +214,7 @@ exports.studentLogin = (req, res, next) => {
 }
 
 
-exports.updateStudent = async (req, res, next) => {
+exports.update = async (req, res, next) => {
     let id = req.params.id
     await Student.findById({
             _id: id
@@ -253,7 +273,7 @@ exports.updateStudent = async (req, res, next) => {
 
 }
 
-exports.deleteStudent = async (req, res, next) => {
+exports.delete = async (req, res, next) => {
     try {
         await Student.findByIdAndDelete({_id: req.params.id}).exec()
 

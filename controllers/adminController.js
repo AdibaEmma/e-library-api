@@ -11,7 +11,7 @@ const Admin = require("../models/Admin");
 // admin auth
 const auth = require("../middlewares/auth")
 
-exports.register = (req, res, next) => {
+exports.create = (req, res, next) => {
     try {
         Admin.find({})
             .exec()
@@ -163,9 +163,28 @@ exports.login = (req, res, next) => {
 
 }
 
-exports.get_all = async (req, res, next) => {
+exports.index = async (req, res, next) => {
     try {
         await Admin.find({})
+            .exec()
+            .then(admins => {
+                foundAdmins = JSON.stringify(admins);
+
+                res.status(200).send(foundAdmins);
+            })
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            "error": "Error: cannot get admins",
+            "err": err
+        })
+    }
+}
+
+exports.show = async (req, res, next) => {
+    try {
+        await Admin.findById({id: req.params.id})
             .exec()
             .then(admins => {
                 foundAdmins = JSON.stringify(admins);
