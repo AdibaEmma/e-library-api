@@ -29,12 +29,13 @@ exports.index = async (req, res, next) => {
 
 exports.show = async (req, res, next) => {
     try {
-        await Admin.findById({id: req.params.id})
+        await Admin.findById({_id: req.params.id})
             .exec()
-            .then(admins => {
-                foundAdmins = JSON.stringify(admins);
+            .then(admin => {
 
-                res.status(200).send(foundAdmins);
+                res.status(302).json({
+                    res: "found",
+                    admin});
             })
 
     } catch (err) {
@@ -250,4 +251,22 @@ exports.update = async (req, res, next) => {
             .exec()
     }
 
+}
+
+exports.Delete = async (req, res, next) => {
+    try {
+        await Admin.findByIdAndDelete({_id: req.params.id}).exec()
+
+    return res.status(200).json({
+        res: "deleted", message: "admin account deleted!"
+    })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            res: "error has occured",
+            error: err.message
+        })
+    }
+    
+    
 }
