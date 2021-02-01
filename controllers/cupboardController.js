@@ -52,3 +52,39 @@ exports.show = async (req, res, next) => {
         })
     }
 }
+
+exports.create = async (req, res, next) => {
+    const {name, no_of_shelves, reference} = req.body
+    try {
+        await Cupboard.find({name}).exec()
+        .then(cupboard => {
+            if(cupboards.length >=1) {
+                res.status(403).json({
+                    res: "unacceptable",
+                    message: `cupboard with name = ${req.body.name} already exists`
+                })
+            } else {
+                new Cupboard({
+                    _id: new mongoose.Types.ObjectId,
+                    name: name,
+                    no_of_shelves: no_of_shelves,
+                    reference: reference
+                })
+                .save()
+                .then(result => {
+                    if (result) {
+                        res.status(201).json({
+                            res: "created",
+                            cupboard: result
+                        })
+                    }
+                })
+            }
+        })
+    } catch (err) {
+        res.status(500).json({
+            res: "error",
+            error: err.message
+        })
+    }
+}
