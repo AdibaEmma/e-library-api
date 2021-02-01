@@ -8,8 +8,42 @@ const mongoose = require("mongoose");
 const dbConnection = require("../db/connect");
 const Admin = require("../models/Admin");
 
-// admin auth
-const auth = require("../middlewares/auth")
+exports.index = async (req, res, next) => {
+    try {
+        await Admin.find({})
+            .exec()
+            .then(admins => {
+                foundAdmins = JSON.stringify(admins);
+
+                res.status(200).send(foundAdmins);
+            })
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            "error": "Error: cannot get admins",
+            "err": err
+        })
+    }
+}
+
+exports.show = async (req, res, next) => {
+    try {
+        await Admin.findById({id: req.params.id})
+            .exec()
+            .then(admins => {
+                foundAdmins = JSON.stringify(admins);
+
+                res.status(200).send(foundAdmins);
+            })
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            "err": err.message
+        })
+    }
+}
 
 exports.create = (req, res, next) => {
     try {
@@ -163,40 +197,57 @@ exports.login = (req, res, next) => {
 
 }
 
-exports.index = async (req, res, next) => {
-    try {
-        await Admin.find({})
-            .exec()
-            .then(admins => {
-                foundAdmins = JSON.stringify(admins);
+exports.update = async (req, res, next) => {
+    let id = req.params.id
+    await Admin.findById({
+            _id: id
+        }).exec()
+        .then(foundAdmin => {
+            if (req.body.password != null) {
+                bcrypt.hash(req.body.password, 10, (err, hash) => {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({
+                            error: "an error occured",
+                            res: err.message
+                        })
+                    } else {
+                        find_and_update(foundAdmin,hash)
+                        return res.status(200).json({
+                            res: "updated",
+                            message: "admin details updated"
+                        })
+                    }
 
-                res.status(200).send(foundAdmins);
-            })
 
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({
-            "error": "Error: cannot get admins",
-            "err": err
+                })
+
+            } else {
+                find_and_update(foundAdmin, foundAdmin.password)
+                return res.status(200).json({
+                    res: "updated",
+                    message: "admin details updated"
+                })
+            }
+
         })
-    }
-}
-
-exports.show = async (req, res, next) => {
-    try {
-        await Admin.findById({id: req.params.id})
-            .exec()
-            .then(admins => {
-                foundAdmins = JSON.stringify(admins);
-
-                res.status(200).send(foundAdmins);
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                res: "an error occured",
+                error: err.message
             })
-
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({
-            "error": "Error: cannot get admins",
-            "err": err
         })
+
+    find_and_update = (admin, password) => {
+        Admin.findByIdAndUpdate({
+                _id: id
+            }, {
+                admin_name: req.body.name ? req.body.name : admin.name,
+                admin_email: req.body.email ? req.body.email : admin.email,
+                password: password
+            })
+            .exec()
     }
+
 }
