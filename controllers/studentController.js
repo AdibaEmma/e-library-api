@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 require("../db/connect");
 const Student = require("../models/Student");
 
+// Fetch all students
 exports.index = async (req, res, next) => {
     await Student.find({})
         .exec()
@@ -25,6 +26,7 @@ exports.index = async (req, res, next) => {
         })
 }
 
+// Get a single student
 exports.show = async (req, res, next) => {
     try {
         await Student.findById({_id: req.params.id}).exec()
@@ -44,7 +46,7 @@ exports.show = async (req, res, next) => {
 }
 
 
-
+// Register Student
 exports.create = async (req, res, next) => {
 
     try {
@@ -81,7 +83,7 @@ exports.create = async (req, res, next) => {
         })
     }
 
-
+    // Function for registering student if conditions are met
     const new_student_signup = () => {
         const {
             name,
@@ -161,6 +163,7 @@ exports.create = async (req, res, next) => {
     }
 }
 
+// Student login
 exports.studentLogin = async (req, res, next) => {
     await Student.findOne({
             indexNo: req.body.indexNo
@@ -273,7 +276,7 @@ exports.update = async (req, res, next) => {
 
 }
 
-exports.delete = async (req, res, next) => {
+exports.Delete = async (req, res, next) => {
     try {
         await Student.findByIdAndDelete({_id: req.params.id}).exec()
 
