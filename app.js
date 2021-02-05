@@ -19,13 +19,14 @@ app.use(cookieParser());
 const admin = require("./routes/adminRouter");
 const student = require("./routes/studentRouter");
 const books = require("./routes/booksRouter")
+const cupboard = require("./routes/cupboardRouter")
 
 
 // using avialable routes.
 app.use("/api", admin)
 app.use("/api", student)
 app.use("/api", books)
-
+app.use("/api", cupboard)
 
 
 

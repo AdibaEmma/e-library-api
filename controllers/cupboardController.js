@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 require("../db/connect");
 const Cupboard = require("../models/Cupboard");
 
+
 // Fetch cupboards
 exports.index = async (req, res, next) => {
     try {
@@ -56,9 +57,9 @@ exports.show = async (req, res, next) => {
 exports.create = async (req, res, next) => {
     const {name, no_of_shelves, reference} = req.body
     try {
-        await Cupboard.find({name}).exec()
-        .then(cupboard => {
-            if(cupboards.length >=1) {
+        await Cupboard.find({name: name}).exec()
+        .then(cupboards => {
+            if(cupboards.length >= 1) {
                 res.status(403).json({
                     res: "unacceptable",
                     message: `cupboard with name = ${req.body.name} already exists`
@@ -80,6 +81,47 @@ exports.create = async (req, res, next) => {
                     }
                 })
             }
+        })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            res: "error",
+            error: err.message
+        })
+    }
+}
+
+exports.update = async (req, res, next) => {
+    const {name, no_of_shelves, reference} = req.body
+    try {
+        await Cupboard.findById({_id: req.params.id}).exec()
+            .then(result => {
+                if(result.length == 1) {
+                    Cupboard.findByIdAndUpdate(
+                        {_id: req.params.id},
+                        {
+                            name: name,
+                            no_of_shelves: no_of_shelves,
+                            reference: reference
+                        }
+                        ).exec()
+                    
+                }
+            })
+    } catch (err) {
+        res.status(500).json({
+            res: "error",
+            error: err.message
+        })
+    }
+}
+
+exports.Delete = async (req, res, next) => {
+    try {
+        await Cupboard.findByIdAndDelete({_id: req.params.id}).exec()
+        return res.status(200).json({
+            res: "deleted",
+            message: "entry has been deleted"
         })
     } catch (err) {
         res.status(500).json({

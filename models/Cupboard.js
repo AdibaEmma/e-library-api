@@ -1,11 +1,16 @@
 const mongoose = require("mongoose")
 
+const shelfSchema = new mongoose.Schema({
+    _id: mongoose.Types.ObjectId,
+    name: String,
+    no_of_books: String,
+})
 
 const cupboardSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
     name: String,
-    no_of_shelves: String,
-    shelves: [String],
+    no_of_shelves: Number, 
+    shelves: [shelfSchema],
     reference: {
         type: Boolean,
         default: false
