@@ -5,7 +5,7 @@ require("../db/connect");
 const Cupboard = require("../models/Cupboard");
 
 
-// Fetch cupboards
+// Fetch all cupboards
 exports.index = async (req, res, next) => {
     try {
         await Cupboard.find({}).exec()
@@ -54,6 +54,7 @@ exports.show = async (req, res, next) => {
     }
 }
 
+//add new cupboard
 exports.create = async (req, res, next) => {
     const {name, no_of_shelves, reference} = req.body
     try {
@@ -68,7 +69,7 @@ exports.create = async (req, res, next) => {
                 new Cupboard({
                     _id: new mongoose.Types.ObjectId,
                     name: name,
-                    no_of_shelves: no_of_shelves,
+                    shelves: shelves,
                     reference: reference
                 })
                 .save()
@@ -76,6 +77,7 @@ exports.create = async (req, res, next) => {
                     if (result) {
                         res.status(201).json({
                             res: "created",
+                            message: "added new cupboard",
                             cupboard: result
                         })
                     }
@@ -101,12 +103,20 @@ exports.update = async (req, res, next) => {
                         {_id: req.params.id},
                         {
                             name: name,
-                            no_of_shelves: no_of_shelves,
+                            shelves: shelves,
                             reference: reference
                         }
                         ).exec()
-                    
-                }
+                    res.status(202).json({
+                        res: "updated",
+                        message: `${name} cupboard has been updated`
+                    })
+                } 
+
+                res.status(409).json({
+                    res: "error",
+                    message: "could not update cupboard"
+                })
             })
     } catch (err) {
         res.status(500).json({

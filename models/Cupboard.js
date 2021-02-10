@@ -9,7 +9,6 @@ const shelfSchema = new mongoose.Schema({
 const cupboardSchema = new mongoose.Schema({
     _id: mongoose.Types.ObjectId,
     name: String,
-    no_of_shelves: Number, 
     shelves: [shelfSchema],
     reference: {
         type: Boolean,
